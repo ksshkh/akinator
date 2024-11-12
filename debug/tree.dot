@@ -1,0 +1,11 @@
+digraph Tree {
+	rankdir = TB;
+	node [shape = record];
+	edge[color = "#FEE8D6"];
+	bgcolor = "#0F0000";
+	node0x55a4364972a0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x55a4364972a0 | value: mipt | { left: 0x55a4364976f0 | right: 0x55a4364976d0}}"];
+		node0x55a4364972a0 -> node0x55a4364976f0
+	node0x55a4364976f0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x55a4364976f0 | value: hz | { left: (nil) | right: (nil)}}"];
+		node0x55a4364972a0 -> node0x55a4364976d0
+	node0x55a4364976d0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x55a4364976d0 | value: rt | { left: (nil) | right: (nil)}}"];
+}
