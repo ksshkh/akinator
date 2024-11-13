@@ -6,15 +6,27 @@
 #include <stdio.h>
 
 enum Errors {
-    NO_ERROR = 0,
-    PTR_ERROR = 1 << 1,
-    SIZE_ERROR = 1 << 2,
-    FILE_ERROR = 1 << 3,
-    READ_ERROR = 1 << 4,
-    NO_DATA = 1 << 5,
-    LOST_NODE = 1 << 6,
+    NO_ERROR               = 0,
 
-    N_ERROR = 7
+    PTR_ERROR              = 1 << 1,
+    SIZE_ERROR             = 1 << 2,
+    STACK_UNDERFLOW        = 1 << 3,
+    NO_STACK               = 1 << 4,
+    FILE_ERROR             = 1 << 5,
+    READ_ERROR             = 1 << 6,
+    BAD_CAPACITY           = 1 << 7,
+    NO_DATA                = 1 << 8,
+    BAD_DATA_RIGHT_CANARY  = 1 << 9,
+    BAD_DATA_LEFT_CANARY   = 1 << 10,
+    BAD_STACK_RIGHT_CANARY = 1 << 11,
+    BAD_STACK_LEFT_CANARY  = 1 << 12,
+    BAD_DATA_HASH          = 1 << 13,
+    BAD_STACK_HASH         = 1 << 14,
+    BAD_HASH               = 1 << 15,
+    BAD_DATA_CANARIES      = 1 << 16,
+    BAD_STACK_CANARIES     = 1 << 17,
+
+    N_ERROR                = 18
 };
 
 #define MY_ASSERT(expression, err) if(!(expression)) {                                                                      \

@@ -3,9 +3,17 @@ digraph Tree {
 	node [shape = record];
 	edge[color = "#FEE8D6"];
 	bgcolor = "#0F0000";
-	node0x55a4364972a0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x55a4364972a0 | value: mipt | { left: 0x55a4364976f0 | right: 0x55a4364976d0}}"];
-		node0x55a4364972a0 -> node0x55a4364976f0
-	node0x55a4364976f0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x55a4364976f0 | value: hz | { left: (nil) | right: (nil)}}"];
-		node0x55a4364972a0 -> node0x55a4364976d0
-	node0x55a4364976d0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x55a4364976d0 | value: rt | { left: (nil) | right: (nil)}}"];
+	node0x6492545374f0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x6492545374f0 | value: mipt | { left: 0x649254537510 | right: 0x649254537530}}"];
+		node0x6492545374f0 -> node0x649254537510
+	node0x649254537510 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537510 | value: hz | { left: (nil) | right: (nil)}}"];
+		node0x6492545374f0 -> node0x649254537530
+	node0x649254537530 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537530 | value: rt | { left: 0x649254537550 | right: 0x649254537570}}"];
+		node0x649254537530 -> node0x649254537550
+	node0x649254537550 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537550 | value: fivt | { left: (nil) | right: (nil)}}"];
+		node0x649254537530 -> node0x649254537570
+	node0x649254537570 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537570 | value: os' | { left: 0x649254537590 | right: 0x6492545375b0}}"];
+		node0x649254537570 -> node0x649254537590
+	node0x649254537590 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537590 | value: polina | { left: (nil) | right: (nil)}}"];
+		node0x649254537570 -> node0x6492545375b0
+	node0x6492545375b0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x6492545375b0 | value: kx | { left: (nil) | right: (nil)}}"];
 }

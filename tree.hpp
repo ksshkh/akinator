@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "errors.hpp"
 
@@ -20,8 +21,13 @@ struct Node {
 
 struct Tree {
     Node* root = NULL;
-    size_t tree_size = 0;
+    size_t depth = 0;
+
+    char* data_base = 0;
+    long int size_data_base = 0;
 };
+
+void TreeCtor(Tree* tree, int* code_error);
 
 Node* NodeCtor(TreeElem data, Node* left, Node* right, int* code_error);
 
@@ -39,8 +45,16 @@ void PrintNode(Node* node, FILE* stream);
 
 void GraphCreate(void);
 
-long int count_size_file(FILE* program, int* code_error);
-
 void HtmlDump(int *code_error);
+
+void PrintTree(Tree* tree, int* code_error);
+
+void PreorderPrinting(Node* node, FILE* stream, int* code_error);
+
+void ReadTree(Tree* tree, int* code_error);
+
+Node* ReadNode(Tree* tree, Node* node, int* code_error);
+
+void GetTreeDepth(Tree* tree, int* code_error);
 
 #endif // TREE_HPP
