@@ -23,7 +23,7 @@ void TreeCtor(Tree* tree, int* code_error) {
     GetTreeDepth(tree, code_error);
 }
 
-Node* NodeCtor(TreeElem data, Node* left, Node* right, int* code_error) {
+Node* NodeCtor(TreeElem data, Node* left, Node* right, Node* parent, int* code_error) {
 
     Node* NewNode = (Node*)calloc(1, sizeof(Node));
     MY_ASSERT(NewNode != NULL, PTR_ERROR);
@@ -31,78 +31,36 @@ Node* NodeCtor(TreeElem data, Node* left, Node* right, int* code_error) {
     NewNode->data = data;
     NewNode->left = left;
     NewNode->right = right;
+    NewNode->parent = parent;
 
     return NewNode;
 }
 
-void DataInsert(Node** node, TreeElem value, int* code_error) {
+// void DataInsert(Node** node, TreeElem value, int* code_error) {
 
-    if(*node == NULL) {
-        *node = NodeCtor(value, NULL, NULL, code_error);
-        MY_ASSERT(node != NULL, PTR_ERROR);
+//     if(*node == NULL) {
+//         *node = NodeCtor(value, NULL, NULL, code_error);
+//         MY_ASSERT(node != NULL, PTR_ERROR);
 
-        return;
-    }
+//         return;
+//     }
 
-    char answer[4] = {};
+//     char answer[4] = {};
 
-    fprintf(stderr, "is %s %s?\n", value, (*node)->data);
-    scanf("%s", answer);
+//     fprintf(stderr, "is %s %s?\n", value, (*node)->data);
+//     scanf("%s", answer);
 
-    if(!strcmp(answer, "no")) {
-        DataInsert(&(*node)->left, value, code_error);
-    }
-    else if(!strcmp(answer, "yes")) {
-        DataInsert(&(*node)->right, value, code_error);
-    }
-    else {
-        fprintf(stderr, "please, enter only 'yes' or 'no'\n");
-    }
+//     if(!strcmp(answer, "no")) {
+//         DataInsert(&(*node)->left, value, code_error);
+//     }
+//     else if(!strcmp(answer, "yes")) {
+//         DataInsert(&(*node)->right, value, code_error);
+//     }
+//     else {
+//         fprintf(stderr, "please, enter only 'yes' or 'no'\n");
+//     }
 
-}
-
-void DataFind(Node** node, int* code_error) {
-
-    if((*node)->left == NULL || (*node)->right == NULL) {
-        EndOfGame(*node, code_error);
-        return;
-    }
-
-    char answer[4] = {};
-
-    fprintf(stderr, "%s?\n", (*node)->data);
-    scanf("%s", answer);
-
-    if(!strcmp(answer, "no")) {
-        DataFind(&(*node)->left, code_error);
-    }
-    else if(!strcmp(answer, "yes")) {
-        DataFind(&(*node)->right , code_error);
-    }
-    else {
-        fprintf(stderr, "please, enter only 'yes' or 'no'\n");
-    }
-}
-
-void EndOfGame(Node* node, int* code_error) {
-
-    MY_ASSERT(node != NULL, PTR_ERROR);
-
-    fprintf(stderr, "is it %s?\n", node->data);
-
-    char answer[4] = {};
-    scanf("%s", answer);
-
-    if(!strcmp(answer, "no")) {
-        fprintf(stderr, "ne hype\n");
-    }
-    else if(!strcmp(answer, "yes")) {
-        fprintf(stderr, "hype\n");
-    }
-    else {
-        fprintf(stderr, "please, enter only 'yes' or 'no'\n");
-    }
-}
+// }
 
 void TreeDtor(Tree* tree, int* code_error) {
 
@@ -146,8 +104,8 @@ void PrintNode(Node* node, FILE* stream) {
 
     if(!node) return;
 
-    fprintf(stream, "\tnode%p [color = " NODE_BORDER_COLOR ", shape = Mrecord, style = filled, fillcolor = " NODE_COLOR ", label = \"{indx: %p | value: %s | { left: %p | right: %p}}\"];\n",
-            node, node, node->data, node->left, node->right);
+    fprintf(stream, "\tnode%p [color = " NODE_BORDER_COLOR ", shape = Mrecord, style = filled, fillcolor = " NODE_COLOR ", label = \"{indx: %p | value: %s | parent: %p | { left: %p | right: %p}}\"];\n",
+            node, node, node->data, node->parent, node->left, node->right);
 
     if(node->left) {
         fprintf(stream, "\t\tnode%p -> node%p\n", node, node->left);
@@ -217,10 +175,10 @@ void ReadTree(Tree* tree, int* code_error) {
     MY_ASSERT(tree != NULL, FILE_ERROR);
     MY_ASSERT(tree->data_base != NULL, PTR_ERROR);
 
-    tree->root = ReadNode(tree, tree->root, code_error);
+    tree->root = ReadNode(tree, tree->root, NULL, code_error);
 }
 
-Node* ReadNode(Tree* tree, Node* node, int* code_error) {
+Node* ReadNode(Tree* tree, Node* node, Node* parent, int* code_error) {
 
     while(isspace(*(tree->data_base)) || *(tree->data_base) == '\0') {
         tree->data_base++;
@@ -247,15 +205,15 @@ Node* ReadNode(Tree* tree, Node* node, int* code_error) {
 
     *(tree->data_base) = '\0';
 
-    node = NodeCtor(data, NULL, NULL, code_error);
+    node = NodeCtor(data, NULL, NULL, parent, code_error);
 
-    node->left = ReadNode(tree, node->left, code_error);
+    node->left = ReadNode(tree, node->left, node, code_error);
 
     while(*(tree->data_base) == ')' || isspace(*(tree->data_base))) {
         tree->data_base++;
     }
 
-    node->right = ReadNode(tree, node->right, code_error);
+    node->right = ReadNode(tree, node->right, node, code_error);
 
     return node;
 }
@@ -275,5 +233,3 @@ void GetTreeDepth(Tree* tree, int* code_error) {
         tree->depth = (curtain_depth > tree->depth) ? curtain_depth : tree->depth;
     }
 }
-// yes yes yes yes no no
-// void ReadNode(Node** node, )

@@ -3,17 +3,17 @@ digraph Tree {
 	node [shape = record];
 	edge[color = "#FEE8D6"];
 	bgcolor = "#0F0000";
-	node0x6492545374f0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x6492545374f0 | value: mipt | { left: 0x649254537510 | right: 0x649254537530}}"];
-		node0x6492545374f0 -> node0x649254537510
-	node0x649254537510 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537510 | value: hz | { left: (nil) | right: (nil)}}"];
-		node0x6492545374f0 -> node0x649254537530
-	node0x649254537530 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537530 | value: rt | { left: 0x649254537550 | right: 0x649254537570}}"];
-		node0x649254537530 -> node0x649254537550
-	node0x649254537550 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537550 | value: fivt | { left: (nil) | right: (nil)}}"];
-		node0x649254537530 -> node0x649254537570
-	node0x649254537570 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537570 | value: os' | { left: 0x649254537590 | right: 0x6492545375b0}}"];
-		node0x649254537570 -> node0x649254537590
-	node0x649254537590 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x649254537590 | value: polina | { left: (nil) | right: (nil)}}"];
-		node0x649254537570 -> node0x6492545375b0
-	node0x6492545375b0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x6492545375b0 | value: kx | { left: (nil) | right: (nil)}}"];
+	node0x64b0172e24f0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x64b0172e24f0 | value: mipt | parent: (nil) | { left: 0x64b0172e2520 | right: 0x64b0172e2550}}"];
+		node0x64b0172e24f0 -> node0x64b0172e2520
+	node0x64b0172e2520 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x64b0172e2520 | value: hz | parent: 0x64b0172e24f0 | { left: (nil) | right: (nil)}}"];
+		node0x64b0172e24f0 -> node0x64b0172e2550
+	node0x64b0172e2550 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x64b0172e2550 | value: rt | parent: 0x64b0172e24f0 | { left: 0x64b0172e2580 | right: 0x64b0172e25b0}}"];
+		node0x64b0172e2550 -> node0x64b0172e2580
+	node0x64b0172e2580 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x64b0172e2580 | value: fivt | parent: 0x64b0172e2550 | { left: (nil) | right: (nil)}}"];
+		node0x64b0172e2550 -> node0x64b0172e25b0
+	node0x64b0172e25b0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x64b0172e25b0 | value: os' | parent: 0x64b0172e2550 | { left: 0x64b0172e25e0 | right: 0x64b0172e2610}}"];
+		node0x64b0172e25b0 -> node0x64b0172e25e0
+	node0x64b0172e25e0 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x64b0172e25e0 | value: polina | parent: 0x64b0172e25b0 | { left: (nil) | right: (nil)}}"];
+		node0x64b0172e25b0 -> node0x64b0172e2610
+	node0x64b0172e2610 [color = "#FEE8D6", shape = Mrecord, style = filled, fillcolor = "#EC9594", label = "{indx: 0x64b0172e2610 | value: kx | parent: 0x64b0172e25b0 | { left: (nil) | right: (nil)}}"];
 }

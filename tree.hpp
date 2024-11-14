@@ -17,6 +17,7 @@ struct Node {
 
     Node* left = NULL;
     Node* right = NULL;
+    Node* parent = NULL;
 };
 
 struct Tree {
@@ -29,13 +30,9 @@ struct Tree {
 
 void TreeCtor(Tree* tree, int* code_error);
 
-Node* NodeCtor(TreeElem data, Node* left, Node* right, int* code_error);
+Node* NodeCtor(TreeElem data, Node* left, Node* right, Node* parent, int* code_error);
 
-void DataInsert(Node** node, TreeElem data, int* code_error);
-
-void DataFind(Node** node, int* code_error);
-
-void EndOfGame(Node* node, int* code_error);
+// void DataInsert(Node** node, TreeElem data, int* code_error);
 
 void DotTreeDump(Tree* tree, int* code_error);
 
@@ -53,7 +50,7 @@ void PreorderPrinting(Node* node, FILE* stream, int* code_error);
 
 void ReadTree(Tree* tree, int* code_error);
 
-Node* ReadNode(Tree* tree, Node* node, int* code_error);
+Node* ReadNode(Tree* tree, Node* node, Node* parent, int* code_error);
 
 void GetTreeDepth(Tree* tree, int* code_error);
 
