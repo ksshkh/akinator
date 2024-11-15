@@ -26,3 +26,10 @@ char* ReadInBuff(const char* filename, long int* stream_size, int* code_error) {
 
     return buffer;
 }
+
+void CleanBuffer(void) {
+    int c = 0;
+    do {
+        c = getchar();
+    } while(c != '\n' && c != EOF);
+}

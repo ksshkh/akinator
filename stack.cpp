@@ -1,6 +1,6 @@
 #include "stack.hpp"
 
-static const char* DEBUG_FILE_NAME = "../debug/processor_dump.txt";
+static const char* DEBUG_FILE_NAME = "./debug/stack_dump.txt";
 
 void StackCtor(Stack_t* stk, size_t initCapacity, int* code_error, const char* file, const char* func, int line) {
 
@@ -37,9 +37,6 @@ void StackCtor(Stack_t* stk, size_t initCapacity, int* code_error, const char* f
 
     PoisonMaker(stk);
 
-    ON_DEBUG(stk->data_hash = DataHash(stk);)
-    ON_DEBUG(stk->stack_hash = StackHash(stk);)
-
     STACK_ASSERT(stk);
 }
 
@@ -54,13 +51,11 @@ void StackDtor(Stack_t* stk, int* code_error) {
     stk->position = 0;
 
     #ifdef DEBUG
-    stk->data_hash = 0;
     stk->file = 0;
     stk->func = 0;
     stk->line = 0;
     stk->left_canary = 0;
     stk->right_canary = 0;
-    stk->stack_hash = 0;
     stk->debug_file_name = NULL;
     #endif
 
@@ -75,9 +70,6 @@ void StackPush(Stack_t* stk, StackElem_t el, int* code_error) {
 
     stk->data[stk->position] = el;
     stk->position++;
-
-    ON_DEBUG(stk->data_hash = DataHash(stk);)
-    ON_DEBUG(stk->stack_hash = StackHash(stk);)
 
     STACK_ASSERT(stk);
 }
@@ -96,9 +88,6 @@ void StackPop(Stack_t* stk, StackElem_t* x, int* code_error) {
 
     *x = stk->data[stk->position];
     stk->data[stk->position] = POISON;
-
-    ON_DEBUG(stk->data_hash = DataHash(stk);)
-    ON_DEBUG(stk->stack_hash = StackHash(stk);)
 
     STACK_ASSERT(stk);
 }
@@ -125,9 +114,6 @@ void StackDump(Stack_t* stk, int* code_error, const char* file, const char* func
 
             ON_DEBUG(fprintf(debug_file, "\tstack born at %s: %d (%s)\n", stk->file, stk->line, stk->func);)
 
-            ON_DEBUG(fprintf(debug_file, "\tstack hash: %#llx\n", stk->stack_hash);)
-            ON_DEBUG(fprintf(debug_file, "\tdata hash: %#llx\n", stk->data_hash);)
-
             ON_DEBUG(fprintf(debug_file, "\tstack left canary: %#llx\n", stk->left_canary);)
 
             fprintf(debug_file, "\tcapacity = %lu\n", stk->capacity);
@@ -142,16 +128,16 @@ void StackDump(Stack_t* stk, int* code_error, const char* file, const char* func
                 if(stk->capacity != 0) {
                     for(size_t i = 0; i < stk->capacity; i++) {
                         if(i < stk->position) {
-                            fprintf(debug_file, "\t\t*[%lu] = %d\n", i, stk->data[i]);
+                            fprintf(debug_file, "\t\t*[%lu] = %p\n", i, stk->data[i]);
                         }
                         else {
-                            fprintf(debug_file, "\t\t[%lu] = %.d(POISON)\n", i, stk->data[i]);
+                            fprintf(debug_file, "\t\t[%lu] = %p(POISON)\n", i, stk->data[i]);
                         }
                     }
                 }
                 else if(stk->position != 0) {
                     for(size_t i = 0; i < stk->position; i++) {
-                        fprintf(debug_file, "\t\t*[%lu] = %d\n", i, stk->data[i]);
+                        fprintf(debug_file, "\t\t*[%lu] = %p\n", i, stk->data[i]);
                     }
                 }
 
@@ -209,18 +195,6 @@ int StackVerification(const Stack_t* stk, int* code_error) {
     }
 
 #ifdef DEBUG
-
-    if(stk->data_hash != DataHash(stk) && stk->stack_hash != StackHash(stk)) {
-        *code_error |= BAD_HASH;
-    }
-
-    if(stk->data_hash != DataHash(stk)) {
-        *code_error |= BAD_DATA_HASH;
-    }
-
-    if(stk->stack_hash != StackHash(stk)) {
-        *code_error |= BAD_STACK_HASH;
-    }
 
     if(*((Canary_t *) stk->data - 1) != DATA_CANARY && *((Canary_t *)(stk->data + stk->capacity)) != DATA_CANARY) {
         *code_error |= BAD_DATA_CANARIES;
@@ -281,9 +255,6 @@ void StackReallocation(Stack_t* stk, FunkId id, int* code_error) {
 
     PoisonMaker(stk);
 
-    ON_DEBUG(stk->data_hash = DataHash(stk);)
-    ON_DEBUG(stk->stack_hash = StackHash(stk);)
-
     STACK_ASSERT(stk);
 }
 
@@ -293,40 +264,3 @@ void PoisonMaker(Stack_t* stk) {
     }
 }
 
-Hash_t DataHash(const Stack_t* stk) {
-    Hash_t hash = 0, high = 0;
-    for (size_t i = 0; i < stk->position; i++) {
-        hash = (hash << 4) + (int)stk->data[i];
-        if (high == (hash & 0xF0000000)) {
-            hash ^= high >> 24;
-        }
-        hash &= ~high;
-    }
-    return hash;
-}
-
-Hash_t StackHash(const Stack_t* stk) {
-    Hash_t hash = 0;
-    StackElem_t data_sum = 0;
-    for (size_t i = 0; i < stk->position; i++) {
-        data_sum += stk->data[i];
-    }
-
-    hash += (int)data_sum;
-    hash += hash << 10;
-    hash ^= hash >> 6;
-
-    hash += stk->capacity;
-    hash += hash << 10;
-    hash ^= hash >> 6;
-
-    hash += stk->position;
-    hash += hash << 10;
-    hash ^= hash >> 6;
-
-    hash += hash << 3;
-    hash ^= hash >> 11;
-    hash += hash << 15;
-
-    return hash;
-}

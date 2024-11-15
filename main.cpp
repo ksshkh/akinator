@@ -15,8 +15,15 @@ int main(void) {
     // DataInsert(&tree.root, "hz", &code_error);
     ReadTree(&tree, &code_error);
     DotTreeDump(&tree, &code_error);
+    // Node* res = NULL;
+    // WordFind(tree.root, "kx", &res, &code_error);
+    // fprintf(stderr, "<%p>\n", res);
+    // GetDefinition(&tree, "polina", &code_error);
+    // WordsCompare(&tree, "kx", "polina", &code_error);
+    AkinatorRun(&tree, &code_error);
+    // DotTreeDump(&tree, &code_error);
 
-    DataGuess(&tree.root, &code_error);
+    // DataGuess(&tree.root, &code_error);
 
     // PrintTree(&tree, &code_error);
     // fprintf(stderr, "depth: %ld\n", tree.depth);

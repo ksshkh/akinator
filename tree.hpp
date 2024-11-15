@@ -54,4 +54,6 @@ Node* ReadNode(Tree* tree, Node* node, Node* parent, int* code_error);
 
 void GetTreeDepth(Tree* tree, int* code_error);
 
+void SaveTree(Tree* tree, int* code_error);
+
 #endif // TREE_HPP

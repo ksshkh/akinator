@@ -1,1 +1,1 @@
-(<mipt>(<hz> nil  nil )(<rt>(<fivt> nil  nil )(<os'>(<polina> nil  nil )(<kx> nil  nil ))))
+(<mipt>(<university> nil  nil )(<gavno>(<idk>(<rt> nil  nil )(<hz> nil  nil ))(<huinya>(<fivt> nil  nil )(<fopf> nil  nil ))))

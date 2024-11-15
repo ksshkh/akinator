@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "errors.hpp"
+#include "tree.hpp"
 
 #define DEBUG
 
@@ -27,7 +28,7 @@
 
 #define STACK_DUMP(stk, code_error) StackDump((stk), (code_error), __FILE__, __func__, __LINE__)
 
-typedef int StackElem_t;
+typedef Node* StackElem_t;
 
 typedef unsigned long long int Hash_t;
 
@@ -36,7 +37,7 @@ typedef unsigned long long int Canary_t;
 const Canary_t STACK_CANARY = 0XACCE55ED;
 const Canary_t DATA_CANARY = 0XC0FFEE;
 
-const StackElem_t POISON = -666;
+const StackElem_t POISON = NULL;
 
 enum FunkId {
     PUSH_ID,
@@ -48,9 +49,6 @@ struct Stack_t {
     const char* debug_file_name = NULL;
 
     ON_DEBUG(Canary_t left_canary = 0;)
-
-    ON_DEBUG(Hash_t stack_hash = 0;)
-    ON_DEBUG(Hash_t data_hash = 0;)
 
     ON_DEBUG(const char* file = NULL;)
     ON_DEBUG(const char* func = NULL;)
@@ -78,9 +76,5 @@ int StackVerification(const Stack_t* stk, int* code_error);
 void StackReallocation(Stack_t* stk, FunkId id, int* code_error);
 
 void PoisonMaker(Stack_t* stk);
-
-Hash_t DataHash(const Stack_t* stk);
-
-Hash_t StackHash(const Stack_t* stk);
 
 #endif // STACK_HPP

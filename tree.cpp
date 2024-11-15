@@ -233,3 +233,14 @@ void GetTreeDepth(Tree* tree, int* code_error) {
         tree->depth = (curtain_depth > tree->depth) ? curtain_depth : tree->depth;
     }
 }
+
+void SaveTree(Tree* tree, int* code_error) {
+
+    MY_ASSERT(tree != NULL, FILE_ERROR);
+
+    // free(tree->data_base);
+
+    tree->data_base = ReadInBuff(AKINATOR_TREE_FILE, &(tree->size_data_base), code_error);
+    MY_ASSERT(tree->data_base != NULL, FILE_ERROR);
+    
+}
