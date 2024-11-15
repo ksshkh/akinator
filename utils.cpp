@@ -20,7 +20,7 @@ char* ReadInBuff(const char* filename, long int* stream_size, int* code_error) {
     char *buffer = (char*)calloc(*stream_size, sizeof(char));
     MY_ASSERT(buffer != NULL, FILE_ERROR);
 
-    fread(buffer, sizeof(char), *stream_size, stream);
+    MY_ASSERT(fread(buffer, sizeof(char), *stream_size, stream) == *stream_size, READ_ERROR);
 
     MY_ASSERT(fclose(stream) == 0, FILE_ERROR);
 
@@ -29,7 +29,37 @@ char* ReadInBuff(const char* filename, long int* stream_size, int* code_error) {
 
 void CleanBuffer(void) {
     int c = 0;
-    do {
-        c = getchar();
-    } while(c != '\n' && c != EOF);
+
+    while ((c = getchar()) != '\n' && c != EOF) {}
 }
+
+char* GetString(FILE* stream, int* code_error) {
+
+    MY_ASSERT(stream != NULL, FILE_ERROR);
+
+    size_t max_len = 10;
+    size_t len = 0;
+
+    char* string = (char*)calloc(max_len, sizeof(char));
+    MY_ASSERT(string != NULL, PTR_ERROR);
+
+    char ch = 0;
+
+    while((ch = (char)fgetc(stream)) != '\n') {
+        string[len++] = ch;
+
+        if(len == max_len) {
+            max_len *= 2;
+
+            string = (char*)realloc(string, max_len);
+            MY_ASSERT(string != NULL, PTR_ERROR);
+        }
+    }
+
+    string[len++] = '\0';
+
+    string = (char*)realloc(string, len);
+    MY_ASSERT(string != NULL, PTR_ERROR);
+
+    return string;
+ }

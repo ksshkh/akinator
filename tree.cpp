@@ -25,15 +25,15 @@ void TreeCtor(Tree* tree, int* code_error) {
 
 Node* NodeCtor(TreeElem data, Node* left, Node* right, Node* parent, int* code_error) {
 
-    Node* NewNode = (Node*)calloc(1, sizeof(Node));
-    MY_ASSERT(NewNode != NULL, PTR_ERROR);
+    Node* new_node = (Node*)calloc(1, sizeof(Node));
+    MY_ASSERT(new_node != NULL, PTR_ERROR);
 
-    NewNode->data = data;
-    NewNode->left = left;
-    NewNode->right = right;
-    NewNode->parent = parent;
+    new_node->data = data;
+    new_node->left = left;
+    new_node->right = right;
+    new_node->parent = parent;
 
-    return NewNode;
+    return new_node;
 }
 
 // void DataInsert(Node** node, TreeElem value, int* code_error) {
@@ -62,11 +62,14 @@ Node* NodeCtor(TreeElem data, Node* left, Node* right, Node* parent, int* code_e
 
 // }
 
+//падает в определении
+//не сохраняет дерево
+
 void TreeDtor(Tree* tree, int* code_error) {
 
     MY_ASSERT(tree != NULL, PTR_ERROR);
 
-    free(tree->root);
+    FreeNode(tree->root, code_error);
     tree->root = NULL;
 
     free(tree->data_base);
@@ -75,6 +78,16 @@ void TreeDtor(Tree* tree, int* code_error) {
     tree->depth = 0;
     tree->size_data_base = 0;
 
+}
+
+void FreeNode(Node* node, int* code_error) {
+
+    if(!node) return;
+
+    FreeNode(node->left, code_error);
+    FreeNode(node->right, code_error);
+    free(node);
+    
 }
 
 void DotTreeDump(Tree* tree, int* code_error) {
@@ -87,7 +100,7 @@ void DotTreeDump(Tree* tree, int* code_error) {
     fprintf(dot_file, "digraph Tree {\n");
     fprintf(dot_file, "\trankdir = TB;\n");
     fprintf(dot_file, "\tnode [shape = record];\n");
-    fprintf(dot_file, "\tedge[color = " NODE_BORDER_COLOR "];\n");
+    fprintf(dot_file, "\tedge [color = " NODE_BORDER_COLOR "];\n");
     fprintf(dot_file, "\tbgcolor = " BACKGROUND_COLOR ";\n");
 
     PrintNode(tree->root, dot_file);
@@ -175,7 +188,11 @@ void ReadTree(Tree* tree, int* code_error) {
     MY_ASSERT(tree != NULL, FILE_ERROR);
     MY_ASSERT(tree->data_base != NULL, PTR_ERROR);
 
+    char* copy_data_base = tree->data_base;
+
     tree->root = ReadNode(tree, tree->root, NULL, code_error);
+
+    tree->data_base = copy_data_base;
 }
 
 Node* ReadNode(Tree* tree, Node* node, Node* parent, int* code_error) {
@@ -238,9 +255,13 @@ void SaveTree(Tree* tree, int* code_error) {
 
     MY_ASSERT(tree != NULL, FILE_ERROR);
 
-    // free(tree->data_base);
+    free(tree->data_base);
 
     tree->data_base = ReadInBuff(AKINATOR_TREE_FILE, &(tree->size_data_base), code_error);
     MY_ASSERT(tree->data_base != NULL, FILE_ERROR);
-    
+
+    FreeNode(tree->root, code_error);
+    ReadTree(tree, code_error);
 }
+// сделать здесь read tree??
+// странный размер дата бэйз

@@ -40,6 +40,8 @@ void TreeDtor(Tree* tree, int* code_error);
 
 void PrintNode(Node* node, FILE* stream);
 
+void FreeNode(Node* node, int* code_error);
+
 void GraphCreate(void);
 
 void HtmlDump(int *code_error);

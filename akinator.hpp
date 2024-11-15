@@ -4,7 +4,7 @@
 #include "tree.hpp"
 #include "stack.hpp"
 
-const int MAX_ANSWER_SIZE = 6;
+const int MAX_ANSWER_SIZE = 20;
 
 void AkinatorRun(Tree* tree, int* code_error);
 
