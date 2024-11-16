@@ -1,5 +1,6 @@
 #include "tree.hpp"
 #include "utils.hpp"
+
 #define NODE_COLOR         "\"#EC9594\""
 #define NODE_BORDER_COLOR  "\"#FEE8D6\""
 #define BACKGROUND_COLOR   "\"#0F0000\""
@@ -87,7 +88,7 @@ void FreeNode(Node* node, int* code_error) {
     FreeNode(node->left, code_error);
     FreeNode(node->right, code_error);
     free(node);
-    
+
 }
 
 void DotTreeDump(Tree* tree, int* code_error) {
@@ -253,7 +254,7 @@ void GetTreeDepth(Tree* tree, int* code_error) {
 
 void SaveTree(Tree* tree, int* code_error) {
 
-    MY_ASSERT(tree != NULL, FILE_ERROR);
+    MY_ASSERT(tree != NULL, PTR_ERROR);
 
     free(tree->data_base);
 

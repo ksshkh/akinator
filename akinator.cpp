@@ -5,30 +5,27 @@ void AkinatorRun(Tree* tree, int* code_error) {
 
     MY_ASSERT(tree != NULL, PTR_ERROR);
 
-    char answer = 0;
+    char mode = 0;
 
     printf("hi, let's play the game\n");
 
     while(true) {
         printf("Press\nq: for quit\ng: for guess character\nd: for get definition\nc: for compare two characters\n");
 
-        if(scanf("%c", &answer) != 1) {
-            printf("pls, use only letters q, g, d, c\n");
-            CleanBuffer();
-            continue;
-        }
+        scanf("%c", &mode);
 
-        switch(answer) {
-            case 'q': {
+        switch(mode) {
+            case QUITE: {
                 printf("bye bye\n");
                 return;
             }
-            case 'g': {
+            case GUESS: {
+                // CleanBuffer();
                 DataGuess(tree, &(tree->root), code_error);
-                CleanBuffer();
+                // CleanBuffer();
                 break;
             }
-            case 'd': {
+            case DEFENITION: {
                 printf("enter name of a character\n");
                 CleanBuffer();
 
@@ -36,26 +33,31 @@ void AkinatorRun(Tree* tree, int* code_error) {
                 MY_ASSERT(character != NULL, PTR_ERROR);
 
                 GetDefinition(tree, character, code_error);
+
+                free(character);
                 break;
             }
-            case 'c': {
-                /*printf("enter name of the first character\n");
+            case COMPARE: {
+                printf("enter name of the first character\n");
+                CleanBuffer();
 
-                char character1 = 0;
-                scanf("%s", &character1);
-                printf("!%s!\n", &character1);
+                char* first_character = GetString(stdin, code_error);
+                MY_ASSERT(first_character != NULL, PTR_ERROR);
 
                 printf("enter name of the second character\n");
 
-                char character2 = 0;
-                scanf("%s", &character2);
-                printf("!%s!\n", &character2);
+                char* second_character = GetString(stdin, code_error);
+                MY_ASSERT(second_character != NULL, PTR_ERROR);
 
-                WordsCompare(tree, &character1, &character2, code_error);
-                break;*/
+                WordsCompare(tree, first_character, second_character, code_error);
+
+                free(first_character);
+                free(second_character);
+                break;
             }
             default:
-                printf("Retry now\n");
+                printf("wrong input!!\n");
+                CleanBuffer();
         }
     }
 }
@@ -63,7 +65,7 @@ void AkinatorRun(Tree* tree, int* code_error) {
 void DataGuess(Tree* tree, Node** node, int* code_error) {
 
     if((*node)->left == NULL || (*node)->right == NULL) {
-        EndOfGame(tree, *node, code_error);
+        EndOfGuess(tree, *node, code_error);
         return;
     }
 
@@ -88,7 +90,7 @@ void DataGuess(Tree* tree, Node** node, int* code_error) {
     free(answer);
 }
 
-void EndOfGame(Tree* tree, Node* node, int* code_error) {
+void EndOfGuess(Tree* tree, Node* node, int* code_error) {
 
     MY_ASSERT(node != NULL, PTR_ERROR);
 
@@ -133,7 +135,7 @@ void EndOfGame(Tree* tree, Node* node, int* code_error) {
 
         PrintTree(tree, code_error);
         DotTreeDump(tree, code_error);
-        // SaveTree(tree, code_error);
+        SaveTree(tree, code_error);
         free(unguess_word);
         free(characteristic);
     }
@@ -158,22 +160,16 @@ void GetDefinition(Tree* tree, TreeElem word, int* code_error) {
         return;
     }
 
-    Stack_t path_stk = {};
-    STACK_CTOR(&path_stk, tree->depth, code_error);
-
-    while(result) {
-        StackPush(&path_stk, result, code_error);
-        result = result->parent;
-    }
+    Stack_t* path_stk = GetTreePath(tree, result, code_error);
 
     printf("%s is", word);
 
-    while(path_stk.position >= 2) {
+    while(path_stk->position >= 2) {
         Node* path_node = 0;
 
-        StackPop(&path_stk, &path_node, code_error);
+        StackPop(path_stk, &path_node, code_error);
 
-        if(path_node->left == path_stk.data[path_stk.position - 1]) {
+        if(path_node->left == path_stk->data[path_stk->position - 1]) {
             printf(" no");
         }
 
@@ -182,7 +178,7 @@ void GetDefinition(Tree* tree, TreeElem word, int* code_error) {
 
     printf("\n");
 
-    StackDtor(&path_stk, code_error);
+    StackDtor(path_stk, code_error);
 }
 
 void WordsCompare(Tree* tree, TreeElem word1, TreeElem word2, int* code_error) {
@@ -197,32 +193,19 @@ void WordsCompare(Tree* tree, TreeElem word1, TreeElem word2, int* code_error) {
     WordFind(tree->root, word1, &result1, code_error);
     WordFind(tree->root, word2, &result2, code_error);
 
-    Stack_t path1_stk = {};
-    Stack_t path2_stk = {};
-
-    STACK_CTOR(&path1_stk, tree->depth, code_error);
-    STACK_CTOR(&path2_stk, tree->depth, code_error);
-
-    while(result1) {
-        StackPush(&path1_stk, result1, code_error);
-        result1 = result1->parent;
-    }
-
-    while(result2) {
-        StackPush(&path2_stk, result2, code_error);
-        result2 = result2->parent;
-    }
+    Stack_t* path1_stk = GetTreePath(tree, result1, code_error);
+    Stack_t* path2_stk = GetTreePath(tree, result2, code_error);
 
     printf("%s and %s are similar in", word1, word2);
 
-    while(path1_stk.position >= 2 && path2_stk.position >= 2) {
+    while(path1_stk->position >= 2 && path2_stk->position >= 2) {
         Node* path1_node = 0;
         Node* path2_node = 0;
 
-        StackPop(&path1_stk, &path1_node, code_error);
-        StackPop(&path2_stk, &path2_node, code_error);
+        StackPop(path1_stk, &path1_node, code_error);
+        StackPop(path2_stk, &path2_node, code_error);
 
-        if(path1_stk.data[path1_stk.position - 1] != path2_stk.data[path2_stk.position - 1]) {
+        if(path1_stk->data[path1_stk->position - 1] != path2_stk->data[path2_stk->position - 1]) {
             printf(" but different in %s", path1_node->data);
         }
         else {
@@ -232,8 +215,8 @@ void WordsCompare(Tree* tree, TreeElem word1, TreeElem word2, int* code_error) {
     }
     printf("\n");
 
-    StackDtor(&path1_stk, code_error);
-    StackDtor(&path2_stk, code_error);
+    StackDtor(path1_stk, code_error);
+    StackDtor(path2_stk, code_error);
 }
 
 void WordFind(Node* node, TreeElem word, Node** result, int* code_error) {
@@ -252,4 +235,22 @@ void WordFind(Node* node, TreeElem word, Node** result, int* code_error) {
     if(!(*result)) WordFind(node->left,  word, result, code_error);
     if(!(*result)) WordFind(node->right, word, result, code_error);
 
+}
+
+Stack_t* GetTreePath(Tree* tree, Node* node, int* code_error) {
+
+    MY_ASSERT(tree != NULL, PTR_ERROR);
+    MY_ASSERT(node != NULL, PTR_ERROR);
+
+    Stack_t* stk = (Stack_t*)calloc(1, sizeof(Stack_t));
+    MY_ASSERT(stk != NULL, PTR_ERROR);
+
+    STACK_CTOR(stk, tree->depth, code_error);
+
+    while(node) {
+        StackPush(stk, node, code_error);
+        node = node->parent;
+    }
+
+    return stk;
 }
