@@ -72,23 +72,19 @@ void DataGuess(Tree* tree, Node** node, int* code_error) {
 
     printf("%s?\n", (*node)->data);
 
-    question:
+    while(strcmp(answer, "no") && strcmp(answer, "yes")) {
+        printf("please, enter only 'yes' or 'no'\n");
+        answer = GetString(stdin, code_error);
+        MY_ASSERT(answer != NULL, PTR_ERROR);
+    }
 
-        if(!strcmp(answer, "no")) {
-            DataGuess(tree, &(*node)->left, code_error);
-        }
-        else if(!strcmp(answer, "yes")) {
-            DataGuess(tree, &(*node)->right , code_error);
-        }
-        else {
-            do {
-                printf("please, enter only 'yes' or 'no'\n");
-                answer = GetString(stdin, code_error);
-                MY_ASSERT(answer != NULL, PTR_ERROR);
-            } while(strcmp(answer, "yes") && strcmp(answer, "no"));
+    if(!strcmp(answer, "no")) {
+        DataGuess(tree, &(*node)->left, code_error);
+    }
+    else if(!strcmp(answer, "yes")) {
+        DataGuess(tree, &(*node)->right , code_error);
+    }
 
-            goto question;
-        }
     free(answer);
 }
 
@@ -101,54 +97,50 @@ void EndOfGame(Tree* tree, Node* node, int* code_error) {
     char* answer = GetString(stdin, code_error);
     MY_ASSERT(answer != NULL, PTR_ERROR);
 
-    question:       // not used
+    while(strcmp(answer, "no") && strcmp(answer, "yes")) {
+        printf("please, enter only 'yes' or 'no'\n");
+        answer = GetString(stdin, code_error);
+        MY_ASSERT(answer != NULL, PTR_ERROR);
+    }
 
-        if(!strcmp(answer, "no")) {
-            printf("who were you thinking of??????\n");
+    if(!strcmp(answer, "no")) {
 
-            char* unguess_word = GetString(stdin, code_error);
-            MY_ASSERT(unguess_word != NULL, PTR_ERROR);
+        printf("who were you thinking of??????\n");
 
-            printf("write the difference between %s and %s\n", unguess_word, node->data);
+        char* unguess_word = GetString(stdin, code_error);
+        MY_ASSERT(unguess_word != NULL, PTR_ERROR);
 
-            char* characteristic = GetString(stdin, code_error);
-            MY_ASSERT(characteristic != NULL, PTR_ERROR);
+        printf("write the difference between %s and %s\n", unguess_word, node->data);
 
-            Node* new_character = NodeCtor(unguess_word, NULL, NULL, NULL, code_error);
-            MY_ASSERT(new_character != NULL, PTR_ERROR);
+        char* characteristic = GetString(stdin, code_error);
+        MY_ASSERT(characteristic != NULL, PTR_ERROR);
 
-            Node* new_node = NodeCtor(characteristic, node, new_character, node->parent, code_error);
-            MY_ASSERT(new_node != NULL, PTR_ERROR);
+        Node* new_character = NodeCtor(unguess_word, NULL, NULL, NULL, code_error);
+        MY_ASSERT(new_character != NULL, PTR_ERROR);
 
-            if(node == node->parent->left) {
-                node->parent->left = new_node;
-            }
-            else if(node == node->parent->right) {
-                node->parent->right = new_node;
-            }
+        Node* new_node = NodeCtor(characteristic, node, new_character, node->parent, code_error);
+        MY_ASSERT(new_node != NULL, PTR_ERROR);
 
-            new_character->parent = new_node;
-            node->parent = new_node;
-
-            PrintTree(tree, code_error);
-            DotTreeDump(tree, code_error);
-            // SaveTree(tree, code_error);
-            free(unguess_word);
-            free(characteristic);
+        if(node == node->parent->left) {
+            node->parent->left = new_node;
         }
-        else if(!strcmp(answer, "yes")) {
-            printf("hype\n");
+        else if(node == node->parent->right) {
+            node->parent->right = new_node;
         }
-        else {
-            do {
-                printf("please, enter only 'yes' or 'no'\n");
-                answer = GetString(stdin, code_error);
-                MY_ASSERT(answer != NULL, PTR_ERROR);
-            } while(strcmp(answer, "yes") && strcmp(answer, "no"));
 
-            goto question;
+        new_character->parent = new_node;
+        node->parent = new_node;
 
-        }
+        PrintTree(tree, code_error);
+        DotTreeDump(tree, code_error);
+        // SaveTree(tree, code_error);
+        free(unguess_word);
+        free(characteristic);
+    }
+    else if(!strcmp(answer, "yes")) {
+        printf("hype\n");
+    }
+
     free(answer);
 }
 
