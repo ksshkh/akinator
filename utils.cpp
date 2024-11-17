@@ -30,7 +30,7 @@ char* ReadInBuff(const char* filename, long int* stream_size, int* code_error) {
 void CleanBuffer(void) {
     int c = 0;
 
-    while ((c = getchar()) != '\n' && c != EOF) {}
+    while (((c = getchar()) != '\n') && c != EOF) {}
 }
 
 char* GetString(FILE* stream, int* code_error) {

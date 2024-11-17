@@ -20,9 +20,7 @@ void AkinatorRun(Tree* tree, int* code_error) {
                 return;
             }
             case GUESS: {
-                // CleanBuffer();
                 DataGuess(tree, &(tree->root), code_error);
-                // CleanBuffer();
                 break;
             }
             case DEFENITION: {
@@ -74,11 +72,7 @@ void DataGuess(Tree* tree, Node** node, int* code_error) {
 
     printf("%s?\n", (*node)->data);
 
-    while(strcmp(answer, "no") && strcmp(answer, "yes")) {
-        printf("please, enter only 'yes' or 'no'\n");
-        answer = GetString(stdin, code_error);
-        MY_ASSERT(answer != NULL, PTR_ERROR);
-    }
+    CHECK_WRONG_AHSWER(answer);
 
     if(!strcmp(answer, "no")) {
         DataGuess(tree, &(*node)->left, code_error);
@@ -99,11 +93,7 @@ void EndOfGuess(Tree* tree, Node* node, int* code_error) {
     char* answer = GetString(stdin, code_error);
     MY_ASSERT(answer != NULL, PTR_ERROR);
 
-    while(strcmp(answer, "no") && strcmp(answer, "yes")) {
-        printf("please, enter only 'yes' or 'no'\n");
-        answer = GetString(stdin, code_error);
-        MY_ASSERT(answer != NULL, PTR_ERROR);
-    }
+    CHECK_WRONG_AHSWER(answer);
 
     if(!strcmp(answer, "no")) {
 
@@ -117,25 +107,12 @@ void EndOfGuess(Tree* tree, Node* node, int* code_error) {
         char* characteristic = GetString(stdin, code_error);
         MY_ASSERT(characteristic != NULL, PTR_ERROR);
 
-        Node* new_character = NodeCtor(unguess_word, NULL, NULL, NULL, code_error);
-        MY_ASSERT(new_character != NULL, PTR_ERROR);
-
-        Node* new_node = NodeCtor(characteristic, node, new_character, node->parent, code_error);
-        MY_ASSERT(new_node != NULL, PTR_ERROR);
-
-        if(node == node->parent->left) {
-            node->parent->left = new_node;
-        }
-        else if(node == node->parent->right) {
-            node->parent->right = new_node;
-        }
-
-        new_character->parent = new_node;
-        node->parent = new_node;
+        AddNewNode(characteristic, unguess_word, node, code_error);
 
         PrintTree(tree, code_error);
         DotTreeDump(tree, code_error);
         SaveTree(tree, code_error);
+
         free(unguess_word);
         free(characteristic);
     }
@@ -144,6 +121,29 @@ void EndOfGuess(Tree* tree, Node* node, int* code_error) {
     }
 
     free(answer);
+}
+
+void AddNewNode(char* characteristic, char* unguess_word, Node* node, int* code_error) {
+
+    MY_ASSERT(characteristic != NULL, PTR_ERROR);
+    MY_ASSERT(unguess_word   != NULL, PTR_ERROR);
+    MY_ASSERT(node           != NULL, PTR_ERROR);
+
+    Node* new_character = NodeCtor(unguess_word, NULL, NULL, NULL, code_error);
+    MY_ASSERT(new_character != NULL, PTR_ERROR);
+
+    Node* new_node = NodeCtor(characteristic, node, new_character, node->parent, code_error);
+    MY_ASSERT(new_node != NULL, PTR_ERROR);
+
+    if(node == node->parent->left) {
+        node->parent->left = new_node;
+    }
+    else if(node == node->parent->right) {
+        node->parent->right = new_node;
+    }
+
+    new_character->parent = new_node;
+    node->parent = new_node;
 }
 
 void GetDefinition(Tree* tree, TreeElem word, int* code_error) {
@@ -155,30 +155,39 @@ void GetDefinition(Tree* tree, TreeElem word, int* code_error) {
 
     WordFind(tree->root, word, &result, code_error);
 
-    if(!result) {
-        printf("word %s not found :(\n", word);
-        return;
-    }
+    WORD_NOT_FOUND(result, word)
 
     Stack_t* path_stk = GetTreePath(tree, result, code_error);
 
+    PrintDefinition(path_stk, word, code_error);
+
+    printf("\n");
+
+    StackDtor(path_stk, code_error);
+}
+
+void PrintDefinition(Stack_t* stk, TreeElem word, int* code_error) {
+
+    MY_ASSERT(stk != NULL, PTR_ERROR);
+
     printf("%s is", word);
 
-    while(path_stk->position >= 2) {
+    if(stk->position < 2) {
+        printf(" %s", word);
+        return;
+    }
+
+    while(stk->position >= 2) {
         Node* path_node = 0;
 
-        StackPop(path_stk, &path_node, code_error);
+        StackPop(stk, &path_node, code_error);
 
-        if(path_node->left == path_stk->data[path_stk->position - 1]) {
+        if(path_node->left == stk->data[stk->position - 1]) {
             printf(" no");
         }
 
         printf(" %s", path_node->data);
     }
-
-    printf("\n");
-
-    StackDtor(path_stk, code_error);
 }
 
 void WordsCompare(Tree* tree, TreeElem word1, TreeElem word2, int* code_error) {
@@ -193,10 +202,20 @@ void WordsCompare(Tree* tree, TreeElem word1, TreeElem word2, int* code_error) {
     WordFind(tree->root, word1, &result1, code_error);
     WordFind(tree->root, word2, &result2, code_error);
 
+    WORD_NOT_FOUND(result1, word1)
+    WORD_NOT_FOUND(result2, word2);
+
+    printf("%s and %s are", word1, word2);
+
+    if(!strcmp(word1, word2)) {
+        printf(" same\n");
+        return;
+    }
+
     Stack_t* path1_stk = GetTreePath(tree, result1, code_error);
     Stack_t* path2_stk = GetTreePath(tree, result2, code_error);
 
-    printf("%s and %s are similar in", word1, word2);
+    printf(" similar in");
 
     while(path1_stk->position >= 2 && path2_stk->position >= 2) {
         Node* path1_node = 0;
@@ -206,12 +225,15 @@ void WordsCompare(Tree* tree, TreeElem word1, TreeElem word2, int* code_error) {
         StackPop(path2_stk, &path2_node, code_error);
 
         if(path1_stk->data[path1_stk->position - 1] != path2_stk->data[path2_stk->position - 1]) {
-            printf(" but different in %s", path1_node->data);
+            printf("\nbut ");
+            PrintDefinition(path1_stk, word1, code_error);
+
+            printf(" and ");
+            PrintDefinition(path2_stk, word2, code_error);
         }
         else {
             printf(" %s", path1_node->data);
         }
-
     }
     printf("\n");
 
