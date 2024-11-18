@@ -9,8 +9,6 @@
 #include "errors.hpp"
 #include "tree.hpp"
 
-#define DEBUG
-
 #ifdef DEBUG
     #define ON_DEBUG(code) code
 
@@ -20,8 +18,10 @@
             STACK_DUMP(stk, code_error);                                  \
         }                                                                 \
     }
+
 #else
     #define ON_DEBUG(code)
+    #define STACK_ASSERT(...)
 #endif
 
 #define STACK_CTOR(stk, initCapacity, code_error) StackCtor((stk), (initCapacity), (code_error), __FILE__, __func__, __LINE__)
@@ -69,12 +69,16 @@ void StackPush(Stack_t* stk, StackElem_t el, int* code_error);
 
 void StackPop(Stack_t* stk, StackElem_t* x, int* code_error);
 
-void StackDump(Stack_t* stk, int* code_error, const char* file, const char* func, int line);        // ifdef DEBUG and verificator
-
-int StackVerification(const Stack_t* stk, int* code_error);
-
 void StackReallocation(Stack_t* stk, FunkId id, int* code_error);
 
 void PoisonMaker(Stack_t* stk);
+
+#ifdef DEBUG
+
+    void StackDump(Stack_t* stk, int* code_error, const char* file, const char* func, int line);
+
+    int StackVerification(const Stack_t* stk, int* code_error);
+
+#endif
 
 #endif // STACK_HPP

@@ -25,8 +25,12 @@ enum Errors {
     BAD_HASH               = 1 << 15,
     BAD_DATA_CANARIES      = 1 << 16,
     BAD_STACK_CANARIES     = 1 << 17,
+    NO_TREE                = 1 << 18,
+    NO_ROOT                = 1 << 19,
+    BASE_ERROR             = 1 << 20,
+    CONNECT_ERROR          = 1 << 21,
 
-    N_ERROR                = 18
+    N_ERROR                = 22
 };
 
 #define MY_ASSERT(expression, err) if(!(expression)) {                                                                      \

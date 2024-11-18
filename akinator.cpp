@@ -1,27 +1,41 @@
 #include "akinator.hpp"
 #include "utils.hpp"
 
-#define WORD_NOT_FOUND(result, word)    if(!result) {                                           \
-                                            printf("word %s was not found :(\n", word);         \
-                                            return;                                             \
-                                        }                                                       \
+#define MODE(str) "\x1b[36m" str "\x1b[0m"
 
-#define CHECK_WRONG_AHSWER(answer)      while(strcmp(answer, "no") && strcmp(answer, "yes")) {  \
-                                            printf("please, enter only 'yes' or 'no'\n");       \
-                                            answer = GetString(stdin, code_error);              \
-                                            MY_ASSERT(answer != NULL, PTR_ERROR);               \
-                                        }                                                       \
+#define WORD_NOT_FOUND(result, word)    if(!result) {                                             \
+                                            printf("word %s was not found :(\n", word);           \
+                                            printf("if you want to add it, choose guess mode\n"); \
+                                            return;                                               \
+                                        }                                                         \
+
+#define CHECK_WRONG_AHSWER(answer)      while(strcmp(answer, "no") && strcmp(answer, "yes")) {    \
+                                            printf("please, enter only 'yes' or 'no'\n");         \
+                                            answer = GetString(stdin, code_error);                \
+                                            MY_ASSERT(answer != NULL, PTR_ERROR);                 \
+                                        }                                                         \
 
 void AkinatorRun(Tree* tree, int* code_error) {
 
     MY_ASSERT(tree != NULL, PTR_ERROR);
+    TREE_ASSERT(tree);
 
     char mode = 0;
 
     printf("hi, let's play the game\n");
 
     while(true) {
-        printf("press\nq: for quit\ng: for guess character\nd: for get definition\nc: for compare two characters\ns: for save data\n");
+        printf("press\n");
+        printf(MODE("q: "));
+        printf("for quit\n");
+        printf(MODE("g: "));
+        printf("for guess character\n");
+        printf(MODE("d: "));
+        printf("for get definition\n");
+        printf(MODE("c: "));
+        printf("for compare two characters\n");
+        printf(MODE("s: "));
+        printf("for save data\n");
 
         scanf("%c", &mode);
 
@@ -80,6 +94,8 @@ void AkinatorRun(Tree* tree, int* code_error) {
 
 void DataGuess(Tree* tree, Node** node, int* code_error) {
 
+    TREE_ASSERT(tree);
+
     if((*node)->left == NULL || (*node)->right == NULL) {
         EndOfGuess(*node, code_error);
         return;
@@ -100,6 +116,8 @@ void DataGuess(Tree* tree, Node** node, int* code_error) {
     }
 
     free(answer);
+
+    TREE_ASSERT(tree);
 }
 
 void EndOfGuess(Node* node, int* code_error) {
@@ -143,6 +161,7 @@ void GetDefinition(Tree* tree, const TreeElem word, int* code_error) {
 
     MY_ASSERT(tree != NULL, PTR_ERROR);
     MY_ASSERT(word != NULL, PTR_ERROR);
+    TREE_ASSERT(tree);
 
     Node* result = NULL;
 
@@ -157,6 +176,8 @@ void GetDefinition(Tree* tree, const TreeElem word, int* code_error) {
     printf("\n");
 
     StackDtor(path_stk, code_error);
+
+    TREE_ASSERT(tree);
 }
 
 void PrintDefinition(Stack_t* stk, const TreeElem word, int* code_error) {
@@ -188,6 +209,7 @@ void WordsCompare(Tree* tree, const TreeElem word1, const TreeElem word2, int* c
     MY_ASSERT(tree  != NULL, PTR_ERROR);
     MY_ASSERT(word1 != NULL, PTR_ERROR);
     MY_ASSERT(word2 != NULL, PTR_ERROR);
+    TREE_ASSERT(tree);
 
     Node* result1 = NULL;
     Node* result2 = NULL;
@@ -232,6 +254,8 @@ void WordsCompare(Tree* tree, const TreeElem word1, const TreeElem word2, int* c
 
     StackDtor(path1_stk, code_error);
     StackDtor(path2_stk, code_error);
+
+    TREE_ASSERT(tree);
 }
 
 void WordFind(Node* node, const TreeElem word, Node** result, int* code_error) {
@@ -256,6 +280,7 @@ Stack_t* GetTreePath(Tree* tree, Node* node, int* code_error) {
 
     MY_ASSERT(tree != NULL, PTR_ERROR);
     MY_ASSERT(node != NULL, PTR_ERROR);
+    TREE_ASSERT(tree);
 
     Stack_t* stk = (Stack_t*)calloc(1, sizeof(Stack_t));
     MY_ASSERT(stk != NULL, PTR_ERROR);
@@ -267,8 +292,10 @@ Stack_t* GetTreePath(Tree* tree, Node* node, int* code_error) {
         node = node->parent;
     }
 
+    TREE_ASSERT(tree);
     return stk;
 }
 
 #undef WORD_NOT_FOUND
 #undef CHECK_WRONG_ANSWER
+#undef MODE

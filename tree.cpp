@@ -5,10 +5,9 @@
 #define NODE_BORDER_COLOR  "\"#FFBE20\""
 #define BACKGROUND_COLOR   "\"#4984F9\""
 
-static const char* DOT_FILE_NAME   = "./debug/tree.dot";
-static const char* DEBUG_FILE_NAME = "./debug/tree_dump.txt";
-static const char* IMAGE_NAME      = "./debug/tree_image.svg";
-static const char* HTML_FILE_NAME  = "./debug/tree.html";
+static const char* DOT_FILE_NAME       = "./debug/tree.dot";
+static const char* IMAGE_NAME          = "./debug/tree_image.svg";
+static const char* HTML_FILE_NAME      = "./debug/tree.html";
 static const char* AKINATOR_TREE_FILE  = "./akinator.txt";
 
 void TreeCtor(Tree* tree, int* code_error) {
@@ -35,6 +34,7 @@ Node* NodeCtor(TreeElem data, Node* left, Node* right, Node* parent, int* code_e
     new_node->parent = parent;
 
     return new_node;
+
 }
 
 void AddNewNode(Node* node, TreeElem data, Side side, int* code_error) {
@@ -60,6 +60,7 @@ void AddNewNode(Node* node, TreeElem data, Side side, int* code_error) {
 void TreeDtor(Tree* tree, int* code_error) {
 
     MY_ASSERT(tree != NULL, PTR_ERROR);
+    TREE_ASSERT(tree);
 
     FreeNode(tree->root, code_error);
     tree->root = NULL;
@@ -95,7 +96,9 @@ void DotTreeDump(Tree* tree, int* code_error) {
     fprintf(dot_file, "\tedge [color = " NODE_BORDER_COLOR "];\n");
     fprintf(dot_file, "\tbgcolor = " BACKGROUND_COLOR ";\n");
 
-    PrintNode(tree->root, dot_file);
+    if(tree->root) {
+        PrintNode(tree->root, dot_file);
+    }
 
     fprintf(dot_file, "}\n");
 
@@ -148,6 +151,7 @@ void HtmlDump(int *code_error) {
 void PrintTree(Tree* tree, int* code_error) {
 
     MY_ASSERT(tree != NULL, FILE_ERROR);
+    TREE_ASSERT(tree);
 
     FILE* printout = fopen(AKINATOR_TREE_FILE, "w");
     MY_ASSERT(printout != NULL, FILE_ERROR);
@@ -185,6 +189,7 @@ void ReadTree(Tree* tree, int* code_error) {
     tree->root = ReadNode(tree, tree->root, NULL, code_error);
 
     tree->data_base = copy_data_base;
+
 }
 
 Node* ReadNode(Tree* tree, Node* node, Node* parent, int* code_error) {
@@ -242,6 +247,52 @@ void GetTreeDepth(Tree* tree, int* code_error) {
         tree->depth = (curtain_depth > tree->depth) ? curtain_depth : tree->depth;
     }
 }
+
+#ifdef DEBUG
+
+    int TreeVerification(const Tree* tree, int* code_error) {
+
+        if(!tree) {
+            *code_error |= NO_TREE;
+            return *code_error;
+        }
+
+        if(!tree->data_base) {
+            *code_error |= BASE_ERROR;
+        }
+
+        if(!tree->root) {
+            *code_error |= NO_ROOT;
+            return *code_error;
+        }
+
+        *code_error = NodeVerificator(tree->root, code_error);
+
+        return *code_error;
+    }
+
+    int NodeVerificator(const Node* node, int* code_error) {
+
+        if(!node) {
+            return NO_ERROR;
+        }
+
+        if(node->parent != NULL) {
+            if(!(node->parent->left == node || node->parent->right == node)) {
+                *code_error |= CONNECT_ERROR;
+            }
+            if(node->parent->left == node && node->parent->right == node) {
+                *code_error |= CONNECT_ERROR;
+            }
+        }
+
+        *code_error |= NodeVerificator(node->left, code_error);
+        *code_error |= NodeVerificator(node->right, code_error);
+
+        return *code_error;
+    }
+
+#endif
 
 #undef NODE_COLOR
 #undef NODE_BORDER_COLOR

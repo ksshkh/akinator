@@ -10,6 +10,8 @@
 
 #include "errors.hpp"
 
+// #define DEBUG
+
 typedef char* TreeElem;
 
 enum Side {
@@ -32,6 +34,26 @@ struct Tree {
     char* data_base = 0;
     long int size_data_base = 0;
 };
+
+#ifdef DEBUG
+
+    #define TREE_ASSERT(tree) {                                               \
+        int err = TreeVerification(tree, code_error);                         \
+        if (err != NO_ERROR) {                                                \
+            DotTreeDump(tree, code_error);                                    \
+            fprintf(stderr, "error %d (file: %s, function: %s, line: %d)\n",  \
+                    *code_error, __FILE__, __func__, __LINE__);               \
+            ErrorsPrint(stderr, code_error);                                  \
+        }                                                                     \
+    }
+
+    int TreeVerification(const Tree* tree, int* code_error);
+
+    int NodeVerificator(const Node* node, int* code_error);
+
+#else
+    #define TREE_ASSERT(...)
+#endif
 
 void TreeCtor(Tree* tree, int* code_error);
 

@@ -92,127 +92,6 @@ void StackPop(Stack_t* stk, StackElem_t* x, int* code_error) {
     STACK_ASSERT(stk);
 }
 
-void StackDump(Stack_t* stk, int* code_error, const char* file, const char* func, int line) {
-
-    FILE* debug_file = fopen(stk->debug_file_name, "a");
-
-    if(debug_file != NULL) {
-
-        fprintf(debug_file, "------------------------------------\n");
-        fprintf(debug_file, "called from %s: %d (%s)\n", file, line, func);
-
-        ErrorsPrint(debug_file, code_error);
-
-        if(*code_error) {
-            fprintf(stderr, "code error %d\n", *code_error);
-        }
-
-        fprintf(debug_file, "Stack_t [%p]\n", stk);
-        fprintf(debug_file, "{\n");
-
-        if(stk != NULL) {
-
-            ON_DEBUG(fprintf(debug_file, "\tstack born at %s: %d (%s)\n", stk->file, stk->line, stk->func);)
-
-            ON_DEBUG(fprintf(debug_file, "\tstack left canary: %#llx\n", stk->left_canary);)
-
-            fprintf(debug_file, "\tcapacity = %lu\n", stk->capacity);
-            fprintf(debug_file, "\tposition = %lu\n", stk->position);
-            fprintf(debug_file, "\tdata [%p]\n", stk->data);
-
-            if(stk->data != NULL) {
-                fprintf(debug_file, "\t{\n");
-
-                ON_DEBUG(fprintf(debug_file, "\t\tdata left canary: %#llx\n", *((Canary_t*) stk->data - 1));)
-
-                if(stk->capacity != 0) {
-                    for(size_t i = 0; i < stk->capacity; i++) {
-                        if(i < stk->position) {
-                            fprintf(debug_file, "\t\t*[%lu] = %p\n", i, stk->data[i]);
-                        }
-                        else {
-                            fprintf(debug_file, "\t\t[%lu] = %p(POISON)\n", i, stk->data[i]);
-                        }
-                    }
-                }
-                else if(stk->position != 0) {
-                    for(size_t i = 0; i < stk->position; i++) {
-                        fprintf(debug_file, "\t\t*[%lu] = %p\n", i, stk->data[i]);
-                    }
-                }
-
-                ON_DEBUG(fprintf(debug_file, "\t\tdata right canary: %#llx\n", *((Canary_t*)(stk->data + stk->capacity)));)
-                fprintf(debug_file, "\t}\n");
-            }
-
-            ON_DEBUG(fprintf(debug_file, "\tstack right canary: %#llx\n", stk->right_canary);)
-        }
-
-        fprintf(debug_file, "}\n");
-        fprintf(debug_file, "------------------------------------\n\n\n");
-
-        if(fclose(debug_file)) {
-            fprintf(stderr, "file did not close\n");
-        }
-    }
-    else {
-        fprintf(stderr, "file did not open\n");
-    }
-}
-
-int StackVerification(const Stack_t* stk, int* code_error) {
-    if(!stk) {
-        *code_error |= NO_STACK;
-        return *code_error;
-    }
-
-    if(!stk->capacity) {
-        *code_error |= BAD_CAPACITY;
-    }
-
-    if(stk->capacity < stk->position) {
-        *code_error |= SIZE_ERROR;
-    }
-#ifdef DEBUG
-
-    if(stk->left_canary != STACK_CANARY && stk->right_canary != STACK_CANARY) {
-        *code_error |= BAD_STACK_CANARIES;
-    }
-
-    if(stk->left_canary != STACK_CANARY) {
-        *code_error |= BAD_STACK_LEFT_CANARY;
-    }
-
-    if(stk->right_canary != STACK_CANARY) {
-        *code_error |= BAD_STACK_RIGHT_CANARY;
-    }
-
-#endif
-
-    if(!stk->data) {
-        *code_error |= NO_DATA;
-        return *code_error;
-    }
-
-#ifdef DEBUG
-
-    if(*((Canary_t *) stk->data - 1) != DATA_CANARY && *((Canary_t *)(stk->data + stk->capacity)) != DATA_CANARY) {
-        *code_error |= BAD_DATA_CANARIES;
-    }
-
-    if(*((Canary_t *) stk->data - 1) != DATA_CANARY) {
-        *code_error |= BAD_DATA_LEFT_CANARY;
-    }
-
-    if(*((Canary_t *)(stk->data + stk->capacity)) != DATA_CANARY) {
-        *code_error |= BAD_DATA_RIGHT_CANARY;
-    }
-
-#endif
-
-    return *code_error;
-}
-
 void StackReallocation(Stack_t* stk, FunkId id, int* code_error) {
     STACK_ASSERT(stk);
 
@@ -260,7 +139,125 @@ void StackReallocation(Stack_t* stk, FunkId id, int* code_error) {
 
 void PoisonMaker(Stack_t* stk) {
     for(size_t i = stk->position; i < stk->capacity; i++) {
-        stk->data[i] = POISON;
+            stk->data[i] = POISON;
     }
 }
+
+#ifdef DEBUG
+
+    void StackDump(Stack_t* stk, int* code_error, const char* file, const char* func, int line) {
+
+        FILE* debug_file = fopen(stk->debug_file_name, "a");
+
+        if(debug_file != NULL) {
+
+            fprintf(debug_file, "------------------------------------\n");
+            fprintf(debug_file, "called from %s: %d (%s)\n", file, line, func);
+
+            ErrorsPrint(debug_file, code_error);
+
+            if(*code_error) {
+                fprintf(stderr, "code error %d\n", *code_error);
+            }
+
+            fprintf(debug_file, "Stack_t [%p]\n", stk);
+            fprintf(debug_file, "{\n");
+
+            if(stk != NULL) {
+
+                ON_DEBUG(fprintf(debug_file, "\tstack born at %s: %d (%s)\n", stk->file, stk->line, stk->func);)
+
+                ON_DEBUG(fprintf(debug_file, "\tstack left canary: %#llx\n", stk->left_canary);)
+
+                fprintf(debug_file, "\tcapacity = %lu\n", stk->capacity);
+                fprintf(debug_file, "\tposition = %lu\n", stk->position);
+                fprintf(debug_file, "\tdata [%p]\n", stk->data);
+
+                if(stk->data != NULL) {
+                    fprintf(debug_file, "\t{\n");
+
+                    ON_DEBUG(fprintf(debug_file, "\t\tdata left canary: %#llx\n", *((Canary_t*) stk->data - 1));)
+
+                    if(stk->capacity != 0) {
+                        for(size_t i = 0; i < stk->capacity; i++) {
+                            if(i < stk->position) {
+                                fprintf(debug_file, "\t\t*[%lu] = %p\n", i, stk->data[i]);
+                            }
+                            else {
+                                fprintf(debug_file, "\t\t[%lu] = %p(POISON)\n", i, stk->data[i]);
+                            }
+                        }
+                    }
+                    else if(stk->position != 0) {
+                        for(size_t i = 0; i < stk->position; i++) {
+                            fprintf(debug_file, "\t\t*[%lu] = %p\n", i, stk->data[i]);
+                        }
+                    }
+
+                    ON_DEBUG(fprintf(debug_file, "\t\tdata right canary: %#llx\n", *((Canary_t*)(stk->data + stk->capacity)));)
+                    fprintf(debug_file, "\t}\n");
+                }
+
+                ON_DEBUG(fprintf(debug_file, "\tstack right canary: %#llx\n", stk->right_canary);)
+            }
+
+            fprintf(debug_file, "}\n");
+            fprintf(debug_file, "------------------------------------\n\n\n");
+
+            if(fclose(debug_file)) {
+                fprintf(stderr, "file did not close\n");
+            }
+        }
+        else {
+            fprintf(stderr, "file did not open\n");
+        }
+    }
+
+    int StackVerification(const Stack_t* stk, int* code_error) {
+        if(!stk) {
+            *code_error |= NO_STACK;
+            return *code_error;
+        }
+
+        if(!stk->capacity) {
+            *code_error |= BAD_CAPACITY;
+        }
+
+        if(stk->capacity < stk->position) {
+            *code_error |= SIZE_ERROR;
+        }
+
+        if(stk->left_canary != STACK_CANARY && stk->right_canary != STACK_CANARY) {
+            *code_error |= BAD_STACK_CANARIES;
+        }
+
+        if(stk->left_canary != STACK_CANARY) {
+            *code_error |= BAD_STACK_LEFT_CANARY;
+        }
+
+        if(stk->right_canary != STACK_CANARY) {
+            *code_error |= BAD_STACK_RIGHT_CANARY;
+        }
+
+        if(!stk->data) {
+            *code_error |= NO_DATA;
+            return *code_error;
+        }
+
+        if(*((Canary_t *) stk->data - 1) != DATA_CANARY && *((Canary_t *)(stk->data + stk->capacity)) != DATA_CANARY) {
+            *code_error |= BAD_DATA_CANARIES;
+        }
+
+        if(*((Canary_t *) stk->data - 1) != DATA_CANARY) {
+            *code_error |= BAD_DATA_LEFT_CANARY;
+        }
+
+        if(*((Canary_t *)(stk->data + stk->capacity)) != DATA_CANARY) {
+            *code_error |= BAD_DATA_RIGHT_CANARY;
+        }
+
+        return *code_error;
+    }
+
+#endif
 

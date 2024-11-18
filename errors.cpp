@@ -17,12 +17,16 @@ static const char* errors_names[] = {"NO_ERROR",
                                      "BAD_STACK_HASH",
                                      "BAD_HASH",
                                      "BAD_DATA_CANARIES",
-                                     "BAD_STACK_CANARIES"};
+                                     "BAD_STACK_CANARIES",
+                                     "NO_TREE",
+                                     "NO_ROOT",
+                                     "BASE_ERROR",
+                                     "CONNECT_ERROR"};
 
 void ErrorsPrint(FILE* stream, int* code_error) {
     for (int i = 0; i < N_ERROR; i++) {
         if (*code_error & (1 << i)) {
-            fprintf(stream, "\x1b[31mERROR: %s\x1b[0m\n", errors_names[i]);
+            fprintf(stream, ERR("%s"), errors_names[i]);
         }
     }
 }
