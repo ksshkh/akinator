@@ -12,6 +12,11 @@
 
 typedef char* TreeElem;
 
+enum Side {
+    LEFT,
+    RIGHT,
+};
+
 struct Node {
     TreeElem data = 0;
 
@@ -32,7 +37,7 @@ void TreeCtor(Tree* tree, int* code_error);
 
 Node* NodeCtor(TreeElem data, Node* left, Node* right, Node* parent, int* code_error);
 
-// void DataInsert(Node** node, TreeElem data, int* code_error);
+void AddNewNode(Node* node, TreeElem data, Side side, int* code_error);
 
 void DotTreeDump(Tree* tree, int* code_error);
 
@@ -55,7 +60,5 @@ void ReadTree(Tree* tree, int* code_error);
 Node* ReadNode(Tree* tree, Node* node, Node* parent, int* code_error);
 
 void GetTreeDepth(Tree* tree, int* code_error);
-
-void SaveTree(Tree* tree, int* code_error);
 
 #endif // TREE_HPP

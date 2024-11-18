@@ -10,6 +10,7 @@ int main(void) {
     ReadTree(&tree, &code_error);
     DotTreeDump(&tree, &code_error);
     AkinatorRun(&tree, &code_error);
+    DotTreeDump(&tree, &code_error);
     TreeDtor(&tree, &code_error);
 
     return 0;

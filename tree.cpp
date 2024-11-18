@@ -1,9 +1,9 @@
 #include "tree.hpp"
 #include "utils.hpp"
 
-#define NODE_COLOR         "\"#EC9594\""
-#define NODE_BORDER_COLOR  "\"#FEE8D6\""
-#define BACKGROUND_COLOR   "\"#0F0000\""
+#define NODE_COLOR         "\"#C0261C\""
+#define NODE_BORDER_COLOR  "\"#FFBE20\""
+#define BACKGROUND_COLOR   "\"#4984F9\""
 
 static const char* DOT_FILE_NAME   = "./debug/tree.dot";
 static const char* DEBUG_FILE_NAME = "./debug/tree_dump.txt";
@@ -37,34 +37,25 @@ Node* NodeCtor(TreeElem data, Node* left, Node* right, Node* parent, int* code_e
     return new_node;
 }
 
-// void DataInsert(Node** node, TreeElem value, int* code_error) {
+void AddNewNode(Node* node, TreeElem data, Side side, int* code_error) {
 
-//     if(*node == NULL) {
-//         *node = NodeCtor(value, NULL, NULL, code_error);
-//         MY_ASSERT(node != NULL, PTR_ERROR);
+    MY_ASSERT(data != NULL, PTR_ERROR);
+    MY_ASSERT(node != NULL, PTR_ERROR);
 
-//         return;
-//     }
+    if(side == LEFT) {
+        Node* new_node = NodeCtor(data, node->left, NULL, node, code_error);
+        MY_ASSERT(new_node != NULL, PTR_ERROR);
 
-//     char answer[4] = {};
+        node->left = new_node;
+    }
+    else if(side == RIGHT) {
+        Node* new_node = NodeCtor(data, NULL, node->right, node, code_error);
+        MY_ASSERT(new_node != NULL, PTR_ERROR);
 
-//     fprintf(stderr, "is %s %s?\n", value, (*node)->data);
-//     scanf("%s", answer);
+        node->right = new_node;
+    }
 
-//     if(!strcmp(answer, "no")) {
-//         DataInsert(&(*node)->left, value, code_error);
-//     }
-//     else if(!strcmp(answer, "yes")) {
-//         DataInsert(&(*node)->right, value, code_error);
-//     }
-//     else {
-//         fprintf(stderr, "please, enter only 'yes' or 'no'\n");
-//     }
-
-// }
-
-//падает в определении
-//не сохраняет дерево
+}
 
 void TreeDtor(Tree* tree, int* code_error) {
 
@@ -252,17 +243,6 @@ void GetTreeDepth(Tree* tree, int* code_error) {
     }
 }
 
-void SaveTree(Tree* tree, int* code_error) {
-
-    MY_ASSERT(tree != NULL, PTR_ERROR);
-
-    free(tree->data_base);
-
-    tree->data_base = ReadInBuff(AKINATOR_TREE_FILE, &(tree->size_data_base), code_error);
-    MY_ASSERT(tree->data_base != NULL, FILE_ERROR);
-
-    FreeNode(tree->root, code_error);
-    ReadTree(tree, code_error);
-}
-// сделать здесь read tree??
-// странный размер дата бэйз
+#undef NODE_COLOR
+#undef NODE_BORDER_COLOR
+#undef BACKGROUND_COLOR
