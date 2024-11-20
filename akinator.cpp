@@ -176,6 +176,8 @@ void GetDefinition(Tree* tree, const TreeElem word, int* code_error) {
     printf("\n");
 
     StackDtor(path_stk, code_error);
+    free(path_stk);
+    path_stk = NULL;
 
     TREE_ASSERT(tree);
 }
@@ -232,14 +234,13 @@ void WordsCompare(Tree* tree, const TreeElem word1, const TreeElem word2, int* c
 
     printf(" similar in");
 
+    if(path1_stk->data[path1_stk->position - 2] != path2_stk->data[path2_stk->position - 2]) printf(" nothing");
+
     while(path1_stk->position >= 2 && path2_stk->position >= 2) {
         Node* path1_node = 0;
         Node* path2_node = 0;
 
-        StackPop(path1_stk, &path1_node, code_error);
-        StackPop(path2_stk, &path2_node, code_error);
-
-        if(path1_stk->data[path1_stk->position - 1] != path2_stk->data[path2_stk->position - 1]) {
+        if(path1_stk->data[path1_stk->position - 2] != path2_stk->data[path2_stk->position - 2]) {
             printf("\nbut ");
             PrintDefinition(path1_stk, word1, code_error);
 
@@ -247,6 +248,13 @@ void WordsCompare(Tree* tree, const TreeElem word1, const TreeElem word2, int* c
             PrintDefinition(path2_stk, word2, code_error);
         }
         else {
+            StackPop(path1_stk, &path1_node, code_error);
+            StackPop(path2_stk, &path2_node, code_error);
+
+            if(path1_node->left == path1_stk->data[path1_stk->position - 1]) {
+                printf(" no");
+            }
+
             printf(" %s", path1_node->data);
         }
     }
@@ -254,6 +262,12 @@ void WordsCompare(Tree* tree, const TreeElem word1, const TreeElem word2, int* c
 
     StackDtor(path1_stk, code_error);
     StackDtor(path2_stk, code_error);
+
+    free(path1_stk);
+    path1_stk = NULL;
+
+    free(path2_stk);
+    path2_stk = NULL;
 
     TREE_ASSERT(tree);
 }

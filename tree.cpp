@@ -42,17 +42,23 @@ void AddNewNode(Node* node, TreeElem data, Side side, int* code_error) {
     MY_ASSERT(data != NULL, PTR_ERROR);
     MY_ASSERT(node != NULL, PTR_ERROR);
 
-    if(side == LEFT) {
-        Node* new_node = NodeCtor(data, node->left, NULL, node, code_error);
-        MY_ASSERT(new_node != NULL, PTR_ERROR);
+    switch(side) {
+        case LEFT: {
+            Node* new_node = NodeCtor(data, node->left, NULL, node, code_error);
+            MY_ASSERT(new_node != NULL, PTR_ERROR);
 
-        node->left = new_node;
-    }
-    else if(side == RIGHT) {
-        Node* new_node = NodeCtor(data, NULL, node->right, node, code_error);
-        MY_ASSERT(new_node != NULL, PTR_ERROR);
+            node->left = new_node;
+            break;
+        }
+        case RIGHT: {
+            Node* new_node = NodeCtor(data, NULL, node->right, node, code_error);
+            MY_ASSERT(new_node != NULL, PTR_ERROR);
 
-        node->right = new_node;
+            node->right = new_node;
+            break;
+        }
+        default:
+            fprintf(stderr, "wrong side\n");
     }
 
 }
@@ -88,24 +94,35 @@ void DotTreeDump(Tree* tree, int* code_error) {
     MY_ASSERT(tree != NULL, PTR_ERROR);
 
     FILE* dot_file = fopen(DOT_FILE_NAME, "w");
-    MY_ASSERT(dot_file != NULL, FILE_ERROR);
+    MY_ASSERT(dot_file != NULL, FOPEN_ERROR);
 
-    fprintf(dot_file, "digraph Tree {\n");
-    fprintf(dot_file, "\trankdir = TB;\n");
-    fprintf(dot_file, "\tnode [shape = record];\n");
-    fprintf(dot_file, "\tedge [color = " NODE_BORDER_COLOR "];\n");
-    fprintf(dot_file, "\tbgcolor = " BACKGROUND_COLOR ";\n");
+    if(dot_file) {
+        fprintf(dot_file, "digraph Tree {\n");
+        fprintf(dot_file, "\trankdir = TB;\n");
+        fprintf(dot_file, "\tnode [shape = record];\n");
+        fprintf(dot_file, "\tedge [color = " NODE_BORDER_COLOR "];\n");
+        fprintf(dot_file, "\tbgcolor = " BACKGROUND_COLOR ";\n");
 
-    if(tree->root) {
-        PrintNode(tree->root, dot_file);
+        if(tree->root) {
+            PrintNode(tree->root, dot_file);
+        }
+        else {
+            fprintf(stderr, "tree is empty\n");
+        }
+
+        fprintf(dot_file, "}\n");
+
+        if(fclose(dot_file)) {
+            fprintf(stderr, "file did not close\n");
+        }
+
+        GraphCreate();
+        HtmlDump(code_error);
     }
-
-    fprintf(dot_file, "}\n");
-
-    MY_ASSERT(fclose(dot_file) == 0, FILE_ERROR);
-
-    GraphCreate();
-    HtmlDump(code_error);
+    else {
+        fprintf(stderr, "file did not open\n");
+    }
+    
 }
 
 void PrintNode(Node* node, FILE* stream) {
@@ -136,29 +153,28 @@ void GraphCreate(void) {
 void HtmlDump(int *code_error) {
 
     FILE* html = fopen(HTML_FILE_NAME, "a");
-    MY_ASSERT(html != NULL, FILE_ERROR);
+    MY_ASSERT(html != NULL, FOPEN_ERROR);
 
     long int image_size = 0;
 
     char *image_data = ReadInBuff(IMAGE_NAME, &image_size, code_error);
-    MY_ASSERT(image_data != NULL, FILE_ERROR);
+    MY_ASSERT(image_data != NULL, PTR_ERROR);
 
     fprintf(html, "%s\n", image_data);
 
-    MY_ASSERT(fclose(html) == 0, FILE_ERROR);
+    MY_ASSERT(fclose(html) == 0, FCLOSE_ERROR);
 }
 
 void PrintTree(Tree* tree, int* code_error) {
 
-    MY_ASSERT(tree != NULL, FILE_ERROR);
     TREE_ASSERT(tree);
 
     FILE* printout = fopen(AKINATOR_TREE_FILE, "w");
-    MY_ASSERT(printout != NULL, FILE_ERROR);
+    MY_ASSERT(printout != NULL, FOPEN_ERROR);
 
     PreorderPrinting(tree->root, printout, code_error);
 
-    MY_ASSERT(fclose(printout) == 0, FILE_ERROR);
+    MY_ASSERT(fclose(printout) == 0, FCLOSE_ERROR);
 }
 
 void PreorderPrinting(Node* node, FILE* stream, int* code_error) {
@@ -181,7 +197,7 @@ void PreorderPrinting(Node* node, FILE* stream, int* code_error) {
 
 void ReadTree(Tree* tree, int* code_error) {
 
-    MY_ASSERT(tree != NULL, FILE_ERROR);
+    MY_ASSERT(tree != NULL, PTR_ERROR);
     MY_ASSERT(tree->data_base != NULL, PTR_ERROR);
 
     char* copy_data_base = tree->data_base;
@@ -234,7 +250,7 @@ Node* ReadNode(Tree* tree, Node* node, Node* parent, int* code_error) {
 
 void GetTreeDepth(Tree* tree, int* code_error) {
 
-    MY_ASSERT(tree != NULL, FILE_ERROR);
+    MY_ASSERT(tree != NULL, PTR_ERROR);
     MY_ASSERT(tree->data_base != NULL, PTR_ERROR);
 
     size_t curtain_depth = 0;

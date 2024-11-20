@@ -1,1 +1,1 @@
-(<lega>(<dal'nik>(<shelly> nil  nil )(<woman>(<kolt> nil  nil )(<electricity>(<piper> nil  nil )(<bell'> nil  nil ))))(<cactus>(<leon> nil  nil )(<spike> nil  nil )))
+(<lega>(<dal'nik>(<ne znay, sam pridumai>(<shelly> nil  nil )(<ksukha> nil  nil ))(<woman>(<kolt> nil  nil )(<electricity>(<piper> nil  nil )(<bell'> nil  nil ))))(<cactus>(<leon> nil  nil )(<spike> nil  nil )))

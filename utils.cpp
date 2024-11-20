@@ -13,16 +13,16 @@ long int count_size_file(FILE* program, int* code_error) {
 char* ReadInBuff(const char* filename, long int* stream_size, int* code_error) {
 
     FILE* stream = fopen(filename, "r");
-    MY_ASSERT(stream != NULL, FILE_ERROR);
+    MY_ASSERT(stream != NULL, FOPEN_ERROR);
 
     *stream_size = count_size_file(stream, code_error);
 
     char *buffer = (char*)calloc(*stream_size, sizeof(char));
-    MY_ASSERT(buffer != NULL, FILE_ERROR);
+    MY_ASSERT(buffer != NULL, PTR_ERROR);
 
     MY_ASSERT(fread(buffer, sizeof(char), *stream_size, stream) == *stream_size, READ_ERROR);
 
-    MY_ASSERT(fclose(stream) == 0, FILE_ERROR);
+    MY_ASSERT(fclose(stream) == 0, FCLOSE_ERROR);
 
     return buffer;
 }
