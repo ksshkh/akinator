@@ -1,5 +1,5 @@
-#include "akinator.hpp"
-#include "utils.hpp"
+#include "../inc/akinator.hpp"
+#include "../inc/utils.hpp"
 
 #define MODE(str) "\x1b[36m" str "\x1b[0m"
 

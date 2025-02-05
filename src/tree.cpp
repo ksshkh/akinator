@@ -1,5 +1,5 @@
-#include "tree.hpp"
-#include "utils.hpp"
+#include "../inc/tree.hpp"
+#include "../inc/utils.hpp"
 
 #define NODE_COLOR         "\"#C0261C\""
 #define NODE_BORDER_COLOR  "\"#FFBE20\""
@@ -122,7 +122,7 @@ void DotTreeDump(Tree* tree, int* code_error) {
     else {
         fprintf(stderr, "file did not open\n");
     }
-    
+
 }
 
 void PrintNode(Node* node, FILE* stream) {

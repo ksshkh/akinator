@@ -1,5 +1,5 @@
-#include "tree.hpp"
-#include "akinator.hpp"
+#include "../inc/tree.hpp"
+#include "../inc/akinator.hpp"
 
 int main(void) {
 
