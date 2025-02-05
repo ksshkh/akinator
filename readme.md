@@ -4,6 +4,8 @@
 
 Программа "отгадывает" слова. Для хранения данных используется бинарное дерево.
 
+## Функционал
+
 Акинатор может:
 1. Угадать слово, если оно содержится в базе данных
 2. Дать определение любому слову из базы данных
@@ -35,12 +37,14 @@
 ```
 После этого появится "меню" игры:
 
-```hi, let's play the game
-press
-q: for quit
-g: for guess character
-d: for get definition
-c: for compare two characters
-s: for save data``` \
+```
+    hi, let's play the game
+    press
+    q: for quit
+    g: for guess character
+    d: for get definition
+    c: for compare two characters
+    s: for save data
+```
 
 Выбирайте режим и следуйте дальнейшим инструкциям!
